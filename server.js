@@ -20,7 +20,7 @@ app.use(logger)
 app.use(cors(corsOptions))
 
 //ability to process json. Let our app receive and parse json data
-app.use(express.json())
+app.use(express.json({ extended: false }))
 
 //ability to parse cookies
 app.use(cookieParser())
@@ -29,7 +29,10 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 // telling express where to find the file. This is middleware.
 // app.use(express.static('public')) also works.
 
+//how we display the index page
 app.use('/', require('./routes/root'))
+app.use('/users', require('./routes/userRoutes'))
+app.use('/notes', require('./routes/noteRoutes'))
 
 // * means all
 app.all('*', (req, res) => {
@@ -55,5 +58,5 @@ mongoose.connection.once('open', () => {
 
 mongoose.connection.on('error', err => {
     console.log(err)
-    logEvents(`${err.name}: ${err.message}\t${req.method}\t${req.url}\t${req.headers.origin}`, 'errLog.log')
+    logEvents(`${err.no}: ${err.code}\t${req.syscall}\t${req.hostname}\t${req.headers.origin}`, 'mongoErrLog.log')
 })
