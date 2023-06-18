@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
-const AutoIncrement = require('mongoose-sequence')(mongoose)
-
+const { autoIncrement } = require('mongoose-plugin-autoinc')
 
 const noteSchema = new mongoose.Schema(
     {
@@ -22,18 +21,16 @@ const noteSchema = new mongoose.Schema(
             default: false
         }
     },
-    //need to add time stamps
     {
         timestamps: true
     }
 )
 
-noteSchema.plugin(AutoIncrement, {
-    // create a ticket field in the noteschema
-    inc_field: 'ticket',
+noteSchema.plugin(autoIncrement, {
+    model: 'Note',
+    field: 'ticket',
     id: 'ticketNums',
-    // start seq at 500
-    start_seq: 500
+    startAt: 500
 })
 
 module.exports = mongoose.model('Note', noteSchema)
