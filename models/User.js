@@ -10,10 +10,10 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     //employee can have more than one role. Capable of adding multiple items in array
-    roles: [{
+    roles: {
         type: [String],
         default: ["Employee"]
-    }],
+    },
     active: {
         type: Boolean,
         default: true

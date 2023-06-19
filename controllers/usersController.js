@@ -1,53 +1,51 @@
 const User = require('../models/User')
 const Note = require('../models/Note')
-// save us from using so many try/catch blocks esp. with mongoose
-/* const asyncHandler = require('express-async-handler') */
-// need it to hash the password before we save it.
 const bcrypt = require('bcrypt')
 
 // @desc Get all users
-// @route GET /users/
+// @route GET /users
 // @access Private
 const getAllUsers = async (req, res) => {
     // Get all users from MongoDB
     const users = await User.find().select('-password').lean()
 
-    // If no users
-    if(!users?.length){
+    // If no users 
+    if (!users?.length) {
         return res.status(400).json({ message: 'No users found' })
     }
+
     res.json(users)
 }
 
 // @desc Create new user
-// @route POST /users/
+// @route POST /users
 // @access Private
 const createNewUser = async (req, res) => {
     const { username, password, roles } = req.body
 
     // Confirm data
-    if(!username || !password ) {
+    if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
     // Check for duplicate username
     const duplicate = await User.findOne({ username }).collation({ locale: 'en', strength: 2 }).lean().exec()
-    
-    if(duplicate){
+
+    if (duplicate) {
         return res.status(409).json({ message: 'Duplicate username' })
     }
 
-    // Hash password. Keeps passwords secure in database
+    // Hash password 
     const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
 
-    const userObj = (!Array.isArray(roles) || !roles.length)
+    const userObject = (!Array.isArray(roles) || !roles.length)
         ? { username, "password": hashedPwd }
-        : { username, "password": hashedPwd, roles}
+        : { username, "password": hashedPwd, roles }
 
-    // Create and store new user
-    const user = await User.create(userObj)
+    // Create and store new user 
+    const user = await User.create(userObject)
 
-    if(user){ //created 
+    if (user) { //created 
         res.status(201).json({ message: `New user ${username} created` })
     } else {
         res.status(400).json({ message: 'Invalid user data received' })
@@ -55,28 +53,28 @@ const createNewUser = async (req, res) => {
 }
 
 // @desc Update a user
-// @route PATCH /users/
+// @route PATCH /users
 // @access Private
 const updateUser = async (req, res) => {
     const { id, username, roles, active, password } = req.body
 
-    // Confirm data
-    if (!id || !username || !Array.isArray(roles) || !roles.length || typeof active !== 'boolean'){
+    // Confirm data 
+    if (!id || !username || !Array.isArray(roles) || !roles.length || typeof active !== 'boolean') {
         return res.status(400).json({ message: 'All fields except password are required' })
     }
 
     // Does the user exist to update?
     const user = await User.findById(id).exec()
 
-    if (!user){
+    if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
 
-    // Check for duplicate
+    // Check for duplicate 
     const duplicate = await User.findOne({ username }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
-    // Allow updates to the original user
-    if (duplicate && duplicate?._id.toString() !== id){
+    // Allow updates to the original user 
+    if (duplicate && duplicate?._id.toString() !== id) {
         return res.status(409).json({ message: 'Duplicate username' })
     }
 
@@ -84,9 +82,9 @@ const updateUser = async (req, res) => {
     user.roles = roles
     user.active = active
 
-    if (password){
-        // Hash password
-        user.password = await bcrypt.hash(password, 10) // salt rounds
+    if (password) {
+        // Hash password 
+        user.password = await bcrypt.hash(password, 10) // salt rounds 
     }
 
     const updatedUser = await user.save()
@@ -94,27 +92,27 @@ const updateUser = async (req, res) => {
     res.json({ message: `${updatedUser.username} updated` })
 }
 
-// @desc delete a user
-// @route DELETE /users/
+// @desc Delete a user
+// @route DELETE /users
 // @access Private
 const deleteUser = async (req, res) => {
     const { id } = req.body
-    
+
     // Confirm data
-    if (!id){
+    if (!id) {
         return res.status(400).json({ message: 'User ID Required' })
     }
 
-    // Does user have assigned notes still?
+    // Does the user still have assigned notes?
     const note = await Note.findOne({ user: id }).lean().exec()
-    if (note){
+    if (note) {
         return res.status(400).json({ message: 'User has assigned notes' })
     }
 
-    // Does user exist to delete?
+    // Does the user exist to delete?
     const user = await User.findById(id).exec()
 
-    if(!user){
+    if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
 
