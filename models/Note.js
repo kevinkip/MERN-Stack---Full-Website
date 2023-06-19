@@ -29,8 +29,8 @@ const noteSchema = new mongoose.Schema(
 noteSchema.plugin(autoIncrement, {
     model: 'Note',
     field: 'ticket',
-    id: 'ticketNums',
-    startAt: 500
+    startAt: 500,
+    incrementBy: 1
 })
 
 module.exports = mongoose.model('Note', noteSchema)
