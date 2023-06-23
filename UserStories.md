@@ -7,13 +7,13 @@
 5. [x] Provide easy navigation
 7. [x] Provide a logout option
 8. [x] Require users to login at least once per week
-9. [ ] Provide a way to remove user access asap if needed
+9. [x] Provide a way to remove user access asap if needed
 10. [x] Display current user and assigned role
-11. [ ] Notes are assigned to specific users
-12. [ ] Notes have a ticket #, title, note body, created & updated dates
-13. [ ] Notes are either OPEN or COMPLETED
+11. [x] Notes are assigned to specific users
+12. [x] Notes have a ticket #, title, note body, created & updated dates
+13. [x] Notes are either OPEN or COMPLETED
 14. [ ] Users can be Employees, Managers, or Admins
-15. [ ] Notes can only be deleted by Managers or Admins
+15. [x] Notes can only be deleted by Managers or Admins
 16. [ ] Anyone can create a note (when customer checks-in)
 17. [ ] Employees can only view and edit their assigned notes
 18. [ ] Managers and Admins can view, edit, and delete all notes
